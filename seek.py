@@ -42,6 +42,11 @@ def get_links(html):
                 if src:
                     self.urls.append(src)
 
+            if tag == 'link':
+                src = dict(attrs).get('href')
+                if src:
+                    self.urls.append(src)
+
     url_seeker = URLSeeker()
     url_seeker.feed(html)
     return url_seeker.urls
@@ -71,8 +76,11 @@ def get_url(url):
 
     urls = get_links_from_url(url, html)
     for orig, url in urls.iteritems():
-        filetype = "png"
-        name = "%s/%s.%s" % (basepath, get_hash_name(orig), filetype)
+        filetype = ".png"
+        _, ext = os.path.splitext(orig)
+        if ext:
+            filetype = ext
+        name = "%s/%s%s" % (basepath, get_hash_name(orig), filetype)
         urllib.urlretrieve(url, name)
         html = html.replace(orig, "/" + name)
 
